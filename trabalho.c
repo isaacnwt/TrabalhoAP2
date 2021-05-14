@@ -22,8 +22,6 @@ typedef struct registro
 
 } aluno;
 
-
-
 void main()
 {
 
@@ -44,5 +42,41 @@ void main()
         scanf("%d", &escolha);
 
     } while ( escolha != 3 );
+
+    switch (escolha)
+    {
+    case 1: cadastrarAlunos();
+        break;
+    case 2: listarAlunos();
+        break;
+    case 3: buscaOrdenada();
+        break;
+    case 4: listagemOrdenada();
+        break;
+    case 5: 
+    
+    default:
+        break;
+    }
+
+}
+
+void cadastrarAlunos(void)
+{
+
+}
+
+void listarAlunos(void)
+{
+
+}
+
+void buscaOrdenada(void)
+{
+
+}
+
+void listagemOrdenada(void)
+{
 
 }
