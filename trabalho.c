@@ -543,33 +543,47 @@ void listagemOrdenada(aluno alunos[])
 void listarNome(aluno alunos[])
 {
 
-    /*a função deverá trocar as posições dos dados no vetor alunos[]
-    comparando as strings, guardando a menor (a que vem antes no alfabeto)
-    colocando na primeira posição e jogando o resto pra frente
-    */
     carregaArquivo(alunos);
-    int i, j;
+    int i, j, k;
     int posicao = 0; //faz o programa checar com os nomes de cada posição no vetor
     int index = localizaUltimaPosicao(alunos);
 
     do{
-        for(i = posicao; i < localizaUltimaPosicao(alunos); i++)
+        for(i = posicao+1; i < localizaUltimaPosicao(alunos); i++)
         {
             
-            //strcmp() -> 0 se for igual, -1 se a primeira vier antes da segunda e +1 no caso contário
-            // se o nome for menor que o primeiro nome faz a mudança de posições
-            if(strcmp(alunos[i].nome , alunos[0].nome) < 0) 
+            /*                strcmp()
+            < 0: conteúdo da string1 é menor do que string2
+            > 0: conteúdo da string1 é maior do que string2                   */
+
+            // se o nome for menor que nome da posição o programa faz a mudança de posições
+            if(strcmp(alunos[i].nome , alunos[posicao].nome) < 0) 
             {
                 //até uma posição a mais que a do último dado
-                for(j = posicao; j < (localizaUltimaPosicao(alunos)+1); j++)
+                for(j = posicao; j < localizaUltimaPosicao(alunos)+1; j++)
                 {
                     //coloca todos os dados do vetor uma posição a frente
                     alunos[j+1] = alunos[j];
                 }
                 //coloca o nome encontrado na primeira posição
-                alunos[0] = alunos[i];
-                
+                alunos[posicao] = alunos[i];
+
+                //arruma a lista tirando o nome que foi trazido pra frente da posição anterior
+                for(j = 0; j < localizaUltimaPosicao(alunos); j++)
+                {
+                    //compara o nome da posição com o resto do vetor
+                    //se for igual apaga a segunda aparição do nome
+                    if(strcmp(alunos[posicao].nome, alunos[j].nome) == 0)
+                    {
+                        //coloca o nome da frente no nome de traz, apagando  o nome repetido
+                        for(k = j; k < localizaUltimaPosicao(alunos); k++)
+                        {
+                            alunos[k] = alunos[k+1];
+                        }
+                    }
+                }
             }
+            
         }
 
         posicao++;
