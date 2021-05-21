@@ -36,6 +36,9 @@ void  buscaOrdenada(aluno alunos[]);
 void  buscaNomeSobrenome(aluno alunos[]);
 void  mostraInfo(aluno alunos[], int i);
 void  mostraInfoSobrenome(aluno alunos[], int i);
+void  mostraInfoData(aluno alunos[], int i);
+void  mostraInfoProntuario(aluno alunos[], int i);
+void  mostraInfoCurso(aluno alunos[], int i);
 void  buscaNome(aluno alunos[]);
 void  buscaSobrenome(aluno alunos[]);
 void  buscaProntuario(aluno alunos[]);
@@ -523,6 +526,42 @@ void mostraInfoSobrenome(aluno alunos[], int i)
     printf("\nCurso........: %s\n", alunos[i].curso);
 }
 
+void mostraInfoData(aluno alunos[], int i)
+{
+    // esta função mostra as informação do aluno passado por parâmetro.
+    
+    printf("\nNascimento...: %d/%d/%d", alunos[i].data_de_nascimento.dia, alunos[i].data_de_nascimento.mes, alunos[i].data_de_nascimento.ano);
+    printf("\nAluno ----   %d   ---- ", i+1);
+    printf("\nSobrenome....: %s", alunos[i].sobrenome);
+    printf("\nNome.........: %s", alunos[i].nome);
+    printf("\nProntuario...: %ld", alunos[i].prontuario);
+    printf("\nCurso........: %s\n", alunos[i].curso);
+}
+
+void mostraInfoProntuario(aluno alunos[], int i)
+{
+    // esta função mostra as informação do aluno passado por parâmetro.
+    
+    printf("\nProntuario...: %ld", alunos[i].prontuario);
+    printf("\nAluno ----   %d   ---- ", i+1);
+    printf("\nSobrenome....: %s", alunos[i].sobrenome);
+    printf("\nNome.........: %s", alunos[i].nome);
+    printf("\nNascimento...: %d/%d/%d", alunos[i].data_de_nascimento.dia, alunos[i].data_de_nascimento.mes, alunos[i].data_de_nascimento.ano);
+    printf("\nCurso........: %s\n", alunos[i].curso);
+}
+
+void mostraInfoCurso(aluno alunos[], int i)
+{
+    // esta função mostra as informação do aluno passado por parâmetro.
+    
+    printf("\nCurso........: %s", alunos[i].curso);
+    printf("\nAluno ----   %d   ---- ", i+1);
+    printf("\nSobrenome....: %s", alunos[i].sobrenome);
+    printf("\nNome.........: %s", alunos[i].nome);
+    printf("\nNascimento...: %d/%d/%d", alunos[i].data_de_nascimento.dia, alunos[i].data_de_nascimento.mes, alunos[i].data_de_nascimento.ano);
+    printf("\nProntuario...: %ld\n", alunos[i].prontuario);
+}
+
 void listagemOrdenada(aluno alunos[])
 {
     // menu para escolher o tipo de listagem desejada
@@ -639,13 +678,135 @@ void organizaPorSobrenome(aluno alunos[])
 
 void organizaPorData(aluno alunos[])
 {
+    // essa função organiza os alunos por data de nascimento
 
+    carregaArquivo(alunos);
+    
+    int i, j;
+    aluno guarda_aluno; //guarda os dados de um aluno na troca de posições
+    int index = localizaUltimaPosicao(alunos);
+
+    //laços for() pegam um dado e compara com o da frente
+    for ( i = 0; i < index; i++)
+    {
+        for ( j = i+1; j < index; j++)
+        {
+            //se o ano2 for antes do ano1
+            if(alunos[i].data_de_nascimento.ano > alunos[j].data_de_nascimento.ano)
+            {
+                //troca de posições dos dados no vetor
+                guarda_aluno = alunos[i];
+                alunos[i] = alunos[j];
+                alunos[j] = guarda_aluno;
+            }
+            //se for o mesmo ano mas o mês2 for antes do mês1
+            else if((alunos[i].data_de_nascimento.ano == alunos[j].data_de_nascimento.ano) &&
+                    (alunos[i].data_de_nascimento.mes > alunos[j].data_de_nascimento.mes))
+            {
+                //troca de posições dos dados no vetor
+                guarda_aluno = alunos[i];
+                alunos[i] = alunos[j];
+                alunos[j] = guarda_aluno;
+            }
+            //se for o mesmo ano e o mesmo mês mas o dia2 for antes do dia1
+            else if((alunos[i].data_de_nascimento.ano == alunos[j].data_de_nascimento.ano) &&
+                    (alunos[i].data_de_nascimento.mes == alunos[j].data_de_nascimento.mes)  &&
+                    (alunos[i].data_de_nascimento.dia > alunos[j].data_de_nascimento.dia))
+            {
+                //troca de posições dos dados no vetor
+                guarda_aluno = alunos[i];
+                alunos[i] = alunos[j];
+                alunos[j] = guarda_aluno;
+            }
+        }
+        
+    }
+
+    printf("\nORDEM DOS CADASTROS ALTERADA COM SUCESSO!\n");
+
+    atualizaArquivo(alunos);
+
+    for(i = 0; i < index; i++)
+    {
+        //a saída dos nomes está vindo com o ENTER
+        mostraInfoData(alunos, i); // mostra as informações do aluno em questão
+    }
+    
 }
+
 void organizaPorProntuario(aluno alunos[])
 {
+    // essa função organiza os alunos por prontuário
 
+    carregaArquivo(alunos);
+    
+    int i, j;
+    aluno guarda_aluno; //guarda os dados de um aluno na troca de posições
+    int index = localizaUltimaPosicao(alunos);
+
+    //laços for() pegam um dado e compara com o da frente
+    for ( i = 0; i < index; i++)
+    {
+        for ( j = i+1; j < index; j++)
+        {
+            //se o prontuário1 for antes do prontuário2
+            if(alunos[i].prontuario > alunos[j].prontuario)
+            {
+                //troca de posições dos dados no vetor
+                guarda_aluno = alunos[i];
+                alunos[i] = alunos[j];
+                alunos[j] = guarda_aluno;
+            }
+        }
+    }
+
+    printf("\nORDEM DOS CADASTROS ALTERADA COM SUCESSO!\n");
+
+    atualizaArquivo(alunos);
+
+    for(i = 0; i < index; i++)
+    {
+        //a saída dos nomes está vindo com o ENTER
+        mostraInfoProntuario(alunos, i); // mostra as informações do aluno em questão
+    }
+    
 }
-void organizaPorCurso(aluno alunos[])
-{
 
+void organizaPorCurso(aluno alunos[])
+{   
+    // essa função organiza os alunos por curso
+
+    carregaArquivo(alunos);
+    
+    int i, j;
+    aluno guarda_aluno; //guarda os dados de um aluno na troca de posições
+    int index = localizaUltimaPosicao(alunos);
+
+    //laços for() pegam um dado e compara com o da frente
+    for ( i = 0; i < index; i++)
+    {
+        for ( j = i+1; j < index; j++)
+        {
+            //se o curso1 for depois do curso2 o strcmp() retorna +1
+            if(strcmp(alunos[i].curso, alunos[j].curso) > 0)
+            {
+                //troca de posições dos dados no vetor
+                guarda_aluno = alunos[i];
+                alunos[i] = alunos[j];
+                alunos[j] = guarda_aluno;
+            }
+        }
+        
+    }
+
+    printf("\nORDEM DOS CADASTROS ALTERADA COM SUCESSO!\n");
+
+    atualizaArquivo(alunos);
+
+    for(i = 0; i < index; i++)
+    {
+        //a saída dos nomes está vindo com o ENTER
+        mostraInfoCurso(alunos, i); // mostra as informações do aluno em questão
+    }
+    
 }
