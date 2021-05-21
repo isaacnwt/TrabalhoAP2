@@ -35,6 +35,7 @@ void  listarAlunos(aluno alunos[]);
 void  buscaOrdenada(aluno alunos[]);
 void  buscaNomeSobrenome(aluno alunos[]);
 void  mostraInfo(aluno alunos[], int i);
+void  mostraInfoSobrenome(aluno alunos[], int i);
 void  buscaNome(aluno alunos[]);
 void  buscaSobrenome(aluno alunos[]);
 void  buscaProntuario(aluno alunos[]);
@@ -45,6 +46,10 @@ void  confirmaApagarDados(aluno alunos[]);
 void  marcarNome(aluno alunos[], int i);
 void  listagemOrdenada(aluno alunos[]);
 void  organizaPorNome(aluno alunos[]);
+void  organizaPorSobrenome(aluno alunos[]);
+void  organizaPorData(aluno alunos[]);
+void  organizaPorProntuario(aluno alunos[]);
+void  organizaPorCurso(aluno alunos[]);
 
 
 void main()
@@ -506,6 +511,18 @@ void mostraInfo(aluno alunos[], int i)
     printf("\nCurso........: %s\n", alunos[i].curso);
 }
 
+void mostraInfoSobrenome(aluno alunos[], int i)
+{
+    // esta função mostra as informação do aluno passado por parâmetro.
+    
+    printf("\nAluno ----   %d   ---- ", i+1);
+    printf("\nSobrenome....: %s", alunos[i].sobrenome);
+    printf("\nNome.........: %s", alunos[i].nome);
+    printf("\nNascimento...: %d/%d/%d", alunos[i].data_de_nascimento.dia, alunos[i].data_de_nascimento.mes, alunos[i].data_de_nascimento.ano);
+    printf("\nProntuario...: %ld", alunos[i].prontuario);
+    printf("\nCurso........: %s\n", alunos[i].curso);
+}
+
 void listagemOrdenada(aluno alunos[])
 {
     // menu para escolher o tipo de listagem desejada
@@ -529,10 +546,10 @@ void listagemOrdenada(aluno alunos[])
         switch (escolha)
         {
         case 1: organizaPorNome(alunos); break;
-        case 2: break;
-        case 3: break;
-        case 4: break;
-        case 5: break;
+        case 2: organizaPorSobrenome(alunos); break;
+        case 3: organizaPorData(alunos); break;
+        case 4: organizaPorProntuario(alunos); break;
+        case 5: organizaPorCurso(alunos); break;
         case 6: break;
         default: printf("\nErro! Opcao invalida.\n");
         }
@@ -555,7 +572,7 @@ void organizaPorNome(aluno alunos[])
         for ( j = i+1; i < index; i++)
         {
             comparador = strcmp(alunos[i].nome, alunos[j].nome);
-            //se o nome estiver antes (dar um valor menor que 0):
+            //se o segundo nome vier antes o strcmp() retorna +1
             if(comparador > 0)
             {
                 //troca de posições dos dados no vetor
@@ -577,4 +594,58 @@ void organizaPorNome(aluno alunos[])
         mostraInfo(alunos, i); // mostra as informações do aluno em questão
     }
     
+}
+
+void organizaPorSobrenome(aluno alunos[])
+{
+    // essa função organiza os alunos alfabéticamente por sobrenome
+    carregaArquivo(alunos);
+    int i, j;
+    int comparador; // recebe o valor da comparação dos nome com strcmp()
+    aluno guarda_aluno; //guarda os dados de um aluno na troca de posições
+    int index = localizaUltimaPosicao(alunos);
+
+    //laços for() pegam um dado e compara com o da frente
+    for ( i = 0; i < index; i++)
+    {
+        for ( j = i+1; i < index; i++)
+        {
+            comparador = strcmp(alunos[i].sobrenome, alunos[j].sobrenome);
+            //se o nome estiver antes (dar um valor menor que 0):
+            if(comparador < 0)
+            {
+                //troca de posições dos dados no vetor
+                guarda_aluno = alunos[i];
+                alunos[i] = alunos[j];
+                alunos[j] = guarda_aluno;
+            }
+        }
+        
+    }
+    
+    printf("\nORDEM DOS CADASTROS ALTERADA COM SUCESSO!\n");
+
+    atualizaArquivo(alunos);
+
+    for(i = 0; i < index; i++)
+    {
+        //a saída dos nomes está vindo com o ENTER
+        mostraInfoSobrenome(alunos, i); // mostra as informações do aluno em questão
+    }
+    
+}
+
+
+
+void organizaPorData(aluno alunos[])
+{
+
+}
+void organizaPorProntuario(aluno alunos[])
+{
+
+}
+void organizaPorCurso(aluno alunos[])
+{
+
 }
