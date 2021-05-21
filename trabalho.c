@@ -560,20 +560,20 @@ void listagemOrdenada(aluno alunos[])
 void organizaPorNome(aluno alunos[])
 {
     // essa função organiza os alunos alfabéticamente por nome
+
     carregaArquivo(alunos);
+    
     int i, j;
-    int comparador; // recebe o valor da comparação dos nome com strcmp()
     aluno guarda_aluno; //guarda os dados de um aluno na troca de posições
     int index = localizaUltimaPosicao(alunos);
-
+ 
     //laços for() pegam um dado e compara com o da frente
     for ( i = 0; i < index; i++)
     {
-        for ( j = i+1; i < index; i++)
+        for ( j = i+1; j < index; j++)
         {
-            comparador = strcmp(alunos[i].nome, alunos[j].nome);
-            //se o segundo nome vier antes o strcmp() retorna +1
-            if(comparador > 0)
+            //se o nome1 for depois do nome2 o strcmp() retorna +1
+            if(strcmp(alunos[i].nome, alunos[j].nome) > 0)
             {
                 //troca de posições dos dados no vetor
                 guarda_aluno = alunos[i];
@@ -599,20 +599,20 @@ void organizaPorNome(aluno alunos[])
 void organizaPorSobrenome(aluno alunos[])
 {
     // essa função organiza os alunos alfabéticamente por sobrenome
+
     carregaArquivo(alunos);
+    
     int i, j;
-    int comparador; // recebe o valor da comparação dos nome com strcmp()
     aluno guarda_aluno; //guarda os dados de um aluno na troca de posições
     int index = localizaUltimaPosicao(alunos);
 
     //laços for() pegam um dado e compara com o da frente
     for ( i = 0; i < index; i++)
     {
-        for ( j = i+1; i < index; i++)
+        for ( j = i+1; j < index; j++)
         {
-            comparador = strcmp(alunos[i].sobrenome, alunos[j].sobrenome);
-            //se o nome estiver antes (dar um valor menor que 0):
-            if(comparador < 0)
+            //se o nome1 for depois do nome2 o strcmp() retorna +1
+            if(strcmp(alunos[i].sobrenome, alunos[j].sobrenome) > 0)
             {
                 //troca de posições dos dados no vetor
                 guarda_aluno = alunos[i];
