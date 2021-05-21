@@ -44,7 +44,7 @@ void  apagarDados(aluno alunos[]);
 void  confirmaApagarDados(aluno alunos[]);
 void  marcarNome(aluno alunos[], int i);
 void  listagemOrdenada(aluno alunos[]);
-void  listarNome(aluno alunos[]);
+void  organizaPorNome(aluno alunos[]);
 
 
 void main()
@@ -528,7 +528,7 @@ void listagemOrdenada(aluno alunos[])
         //chama a função conforme a opção escolhida
         switch (escolha)
         {
-        case 1: listarNome(alunos); break;
+        case 1: organizaPorNome(alunos); break;
         case 2: break;
         case 3: break;
         case 4: break;
@@ -540,54 +540,33 @@ void listagemOrdenada(aluno alunos[])
     } while ( escolha != 6 );
 }
 
-void listarNome(aluno alunos[])
+void organizaPorNome(aluno alunos[])
 {
-
+    // essa função organiza os alunos alfabéticamente por nome
     carregaArquivo(alunos);
-    int i, j, k;
-    int posicao = 0; //faz o programa checar com os nomes de cada posição no vetor
+    int i, j;
+    int comparador; // recebe o valor da comparação dos nome com strcmp()
+    aluno guarda_aluno; //guarda os dados de um aluno na troca de posições
     int index = localizaUltimaPosicao(alunos);
 
-    do{
-        for(i = posicao+1; i < localizaUltimaPosicao(alunos); i++)
+    //laços for() pegam um dado e compara com o da frente
+    for ( i = 0; i < index; i++)
+    {
+        for ( j = i+1; i < index; i++)
         {
-            
-            /*                strcmp()
-            < 0: conteúdo da string1 é menor do que string2
-            > 0: conteúdo da string1 é maior do que string2                   */
-
-            // se o nome for menor que nome da posição o programa faz a mudança de posições
-            if(strcmp(alunos[i].nome , alunos[posicao].nome) < 0) 
+            comparador = strcmp(alunos[i].nome, alunos[j].nome);
+            //se o nome estiver antes (dar um valor menor que 0):
+            if(comparador > 0)
             {
-                //até uma posição a mais que a do último dado
-                for(j = posicao; j < localizaUltimaPosicao(alunos)+1; j++)
-                {
-                    //coloca todos os dados do vetor uma posição a frente
-                    alunos[j+1] = alunos[j];
-                }
-                //coloca o nome encontrado na primeira posição
-                alunos[posicao] = alunos[i];
-
-                //arruma a lista tirando o nome que foi trazido pra frente da posição anterior
-                for(j = 0; j < localizaUltimaPosicao(alunos); j++)
-                {
-                    //compara o nome da posição com o resto do vetor
-                    //se for igual apaga a segunda aparição do nome
-                    if(strcmp(alunos[posicao].nome, alunos[j].nome) == 0)
-                    {
-                        //coloca o nome da frente no nome de traz, apagando  o nome repetido
-                        for(k = j; k < localizaUltimaPosicao(alunos); k++)
-                        {
-                            alunos[k] = alunos[k+1];
-                        }
-                    }
-                }
+                //troca de posições dos dados no vetor
+                guarda_aluno = alunos[i];
+                alunos[i] = alunos[j];
+                alunos[j] = guarda_aluno;
             }
-            
         }
-
-        posicao++;
-    }while(posicao < index);
+        
+    }
+    
     printf("\nORDEM DOS CADASTROS ALTERADA COM SUCESSO!\n");
 
     atualizaArquivo(alunos);
