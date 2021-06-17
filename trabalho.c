@@ -53,6 +53,9 @@ int   menuOrdenacao();
 void  selectionSort(aluno alunos[], int tipo );
 void  setaTipoOrdenacao(aluno alunos[], int escolha, int tipo);
 void  trocaPosicao(aluno *posicao1, aluno *posicao2);
+void  mergeSort(aluno alunos[], int tipo);
+void  ordenaIntercalacao(aluno alunos[], int ini, int fim, int tipo);
+void  intercalar(aluno alunos[], int ini, int meio, int fim, int tipo);
 
 
 void main()
@@ -514,54 +517,6 @@ void mostraInfo(aluno alunos[], int i)
     printf("\nCurso........: %s\n", alunos[i].curso);
 }
 
-void mostraInfoSobrenome(aluno alunos[], int i)
-{
-    // esta função mostra as informação do aluno passado por parâmetro.
-    
-    printf("\nAluno ----   %d   ---- ", i+1);
-    printf("\nSobrenome....: %s", alunos[i].sobrenome);
-    printf("\nNome.........: %s", alunos[i].nome);
-    printf("\nNascimento...: %d/%d/%d", alunos[i].data_de_nascimento.dia, alunos[i].data_de_nascimento.mes, alunos[i].data_de_nascimento.ano);
-    printf("\nProntuario...: %ld", alunos[i].prontuario);
-    printf("\nCurso........: %s\n", alunos[i].curso);
-}
-
-void mostraInfoData(aluno alunos[], int i)
-{
-    // esta função mostra as informação do aluno passado por parâmetro.
-    
-    printf("\nNascimento...: %d/%d/%d", alunos[i].data_de_nascimento.dia, alunos[i].data_de_nascimento.mes, alunos[i].data_de_nascimento.ano);
-    printf("\nAluno ----   %d   ---- ", i+1);
-    printf("\nSobrenome....: %s", alunos[i].sobrenome);
-    printf("\nNome.........: %s", alunos[i].nome);
-    printf("\nProntuario...: %ld", alunos[i].prontuario);
-    printf("\nCurso........: %s\n", alunos[i].curso);
-}
-
-void mostraInfoProntuario(aluno alunos[], int i)
-{
-    // esta função mostra as informação do aluno passado por parâmetro.
-    
-    printf("\nProntuario...: %ld", alunos[i].prontuario);
-    printf("\nAluno ----   %d   ---- ", i+1);
-    printf("\nSobrenome....: %s", alunos[i].sobrenome);
-    printf("\nNome.........: %s", alunos[i].nome);
-    printf("\nNascimento...: %d/%d/%d", alunos[i].data_de_nascimento.dia, alunos[i].data_de_nascimento.mes, alunos[i].data_de_nascimento.ano);
-    printf("\nCurso........: %s\n", alunos[i].curso);
-}
-
-void mostraInfoCurso(aluno alunos[], int i)
-{
-    // esta função mostra as informação do aluno passado por parâmetro.
-    
-    printf("\nCurso........: %s", alunos[i].curso);
-    printf("\nAluno ----   %d   ---- ", i+1);
-    printf("\nSobrenome....: %s", alunos[i].sobrenome);
-    printf("\nNome.........: %s", alunos[i].nome);
-    printf("\nNascimento...: %d/%d/%d", alunos[i].data_de_nascimento.dia, alunos[i].data_de_nascimento.mes, alunos[i].data_de_nascimento.ano);
-    printf("\nProntuario...: %ld\n", alunos[i].prontuario);
-}
-
 void listagemOrdenada(aluno alunos[])
 {
     // menu para escolher o tipo de listagem desejada
@@ -716,8 +671,99 @@ void setaTipoOrdenacao(aluno alunos[], int escolha, int tipo)
     {
         case 1: selectionSort(alunos, tipo); break;
         // case 2: insertionSort(alunos, tipo); break;
-        // case 3: mergeSort(alunos, tipo); break;
+        case 3: mergeSort(alunos, tipo); break;
         // case 4: quickSort(alunos, tipo); break;
         default: break;
     }
+}
+
+
+void mergeSort(aluno alunos[], int tipo)
+{
+    carregaArquivo(alunos);
+    int tam = localizaUltimaPosicao(alunos);
+    
+    if ( tipo == 1 )
+    {
+        ordenaIntercalacao(alunos, 0, tam, tipo);
+    }
+    else
+    if ( tipo == 2)
+    {
+        ordenaIntercalacao(alunos, 0, tam, tipo);
+    }
+    else
+    if ( tipo == 3)
+    {
+        ordenaIntercalacao(alunos, 0, tam, tipo);
+    }
+    else
+    if ( tipo == 4)
+    {
+        ordenaIntercalacao(alunos, 0, tam, tipo);
+    }
+    else
+    if ( tipo == 5)
+    {
+        ordenaIntercalacao(alunos, 0, tam, tipo);
+    }
+
+
+}
+
+void ordenaIntercalacao(aluno alunos[], int ini, int fim, int tipo)
+{
+    int meio;
+
+    if ( ini < fim )
+    {
+        meio = (ini + fim) / 2;
+        ordenaIntercalacao(alunos, ini, meio, tipo);
+        ordenaIntercalacao(alunos, meio+1, fim, tipo);
+        intercalar(alunos, ini, meio, fim, tipo);
+    }
+}
+
+void intercalar(aluno alunos[], int ini, int meio, int fim, int tipo)
+{
+    aluno alunos_aux[QUANTIDADE_ALUNOS];
+    int i = ini;
+    int j = meio + 1;
+    int k = 0;
+    
+    switch (tipo)
+    {
+    case 1:
+        while (i <= meio && j <= fim)
+        {
+            if (strcmp(alunos[i].nome, alunos[j].nome) < 0) 
+                alunos_aux[k++] = alunos[i++];
+            else                                            
+                alunos_aux[k++] = alunos[j++];
+        }
+
+        while (i <= meio) alunos_aux[k++] = alunos[i++];
+        while (j <= fim)  alunos_aux[k++] = alunos[j++];
+
+        for ( i = ini, k = 0; i <= fim; k++) 
+        alunos[i] = alunos_aux[k];
+
+    case 2:
+        /* code */
+        break;
+    case 3:
+        /* code */
+        break;
+    case 4:
+        /* code */
+        break;
+    case 5:
+        /* code */
+        break;
+    
+    default:
+        break;
+    }
+    
+    
 }
