@@ -53,8 +53,7 @@ int   menuOrdenacao();
 void  selectionSort(aluno alunos[], int tipo );
 void  setaTipoOrdenacao(aluno alunos[], int escolha, int tipo);
 void  trocaPosicao(aluno *posicao1, aluno *posicao2);
-void  mergeSort(aluno alunos[], int tipo);
-void  ordenaIntercalacao(aluno alunos[], int ini, int fim, int tipo);
+void  mergeSort(aluno alunos[], int ini, int fim, int tipo);
 void  intercalar(aluno alunos[], int ini, int meio, int fim, int tipo);
 
 
@@ -649,7 +648,7 @@ void trocaPosicao(aluno *posicao1, aluno *posicao2)
 
 int menuOrdenacao()
 {
-    int escolha = 0;
+    int escolha;
     do
     {
 
@@ -667,102 +666,77 @@ int menuOrdenacao()
 
 void setaTipoOrdenacao(aluno alunos[], int escolha, int tipo)
 {
+    int tam = localizaUltimaPosicao(alunos);
+
     switch(escolha)
     {
         case 1: selectionSort(alunos, tipo); break;
         // case 2: insertionSort(alunos, tipo); break;
-        case 3: mergeSort(alunos, tipo); break;
+        case 3: mergeSort(alunos, 0, tam, tipo); break;
         // case 4: quickSort(alunos, tipo); break;
         default: break;
     }
 }
 
 
-void mergeSort(aluno alunos[], int tipo)
-{
+void mergeSort(aluno alunos[], int ini, int fim, int tipo)
+{   
     carregaArquivo(alunos);
-    int tam = localizaUltimaPosicao(alunos);
-    
-    if ( tipo == 1 )
-    {
-        ordenaIntercalacao(alunos, 0, tam, tipo);
-    }
-    else
-    if ( tipo == 2)
-    {
-        ordenaIntercalacao(alunos, 0, tam, tipo);
-    }
-    else
-    if ( tipo == 3)
-    {
-        ordenaIntercalacao(alunos, 0, tam, tipo);
-    }
-    else
-    if ( tipo == 4)
-    {
-        ordenaIntercalacao(alunos, 0, tam, tipo);
-    }
-    else
-    if ( tipo == 5)
-    {
-        ordenaIntercalacao(alunos, 0, tam, tipo);
-    }
-
-
-}
-
-void ordenaIntercalacao(aluno alunos[], int ini, int fim, int tipo)
-{
     int meio;
 
-    if ( ini < fim )
+    if (ini < fim)
     {
-        meio = (ini + fim) / 2;
-        ordenaIntercalacao(alunos, ini, meio, tipo);
-        ordenaIntercalacao(alunos, meio+1, fim, tipo);
+        meio = (ini + fim)/2;
+        mergeSort(alunos, ini, meio, tipo);
+        mergeSort(alunos, meio+1, fim, tipo);
         intercalar(alunos, ini, meio, fim, tipo);
     }
+    
+    atualizaArquivo(alunos);
 }
 
 void intercalar(aluno alunos[], int ini, int meio, int fim, int tipo)
 {
-    aluno alunos_aux[QUANTIDADE_ALUNOS];
+    aluno aux[QUANTIDADE_ALUNOS];
     int i = ini;
     int j = meio + 1;
-    int k = 0;
+    int k = 0; // marca a posição que é colocado os valores em aux
     
-    switch (tipo)
+    if ( tipo == 1 )
     {
-    case 1:
         while (i <= meio && j <= fim)
         {
-            if (strcmp(alunos[i].nome, alunos[j].nome) < 0) 
-                alunos_aux[k++] = alunos[i++];
-            else                                            
-                alunos_aux[k++] = alunos[j++];
+            if (strcmp(alunos[i].nome, alunos[j].nome) <= 0)
+                aux[k++] = alunos[i++];
+            else
+                aux[k++] = alunos[j++];
         }
 
-        while (i <= meio) alunos_aux[k++] = alunos[i++];
-        while (j <= fim)  alunos_aux[k++] = alunos[j++];
+        while (i <= meio)
+            aux[k++] = alunos[i++];
+        while (j <= fim)
+            aux[k++] = alunos[j++];
 
-        for ( i = ini, k = 0; i <= fim; k++) 
-        alunos[i] = alunos_aux[k];
+        for(i = ini, k = 0; i <= fim; i++, k++)
+            alunos[i] = aux[k];
+    }
+    if ( tipo == 2 )
+    {
+        while (i <= meio && j <= fim)
+        {
+            if (strcmp(alunos[i].sobrenome, alunos[j].sobrenome) <= 0)
+                aux[k++] = alunos[i++];
+            else
+                aux[k++] = alunos[j++];
+        }
 
-    case 2:
-        /* code */
-        break;
-    case 3:
-        /* code */
-        break;
-    case 4:
-        /* code */
-        break;
-    case 5:
-        /* code */
-        break;
-    
-    default:
-        break;
+        while (i <= meio)
+            aux[k++] = alunos[i++];
+        while (j <= fim)
+            aux[k++] = alunos[j++];
+
+        for(i = ini, k = 0; i <= fim; i++, k++)
+            alunos[i] = aux[k];
     }
     
     
