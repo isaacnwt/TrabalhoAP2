@@ -654,10 +654,10 @@ int menuOrdenacao()
 
         printf("\n[ 1 ] - Ordenar por Selecao\n");
         printf("[ 2 ] - Ordenar por Insercao\n");
-        printf("[ 3 ] - Ordernar por Intercalacao (merge sort) \n");
-        printf("[ 4 ] - Ordernar por Particionamento (quick sort) \n");
+        printf("[ 3 ] - Ordernar por Intercalacao (Merge Sort) \n");
+        printf("[ 4 ] - Ordernar por Particionamento (Quick Sort) \n");
 
-        printf("Digite a opção desejada:"); scanf("%d", &escolha);
+        printf("Digite a opcao desejada: "); scanf("%d", &escolha);
 
     } while ( escolha < 1 || escolha > 4 );
 
@@ -738,6 +738,65 @@ void intercalar(aluno alunos[], int ini, int meio, int fim, int tipo)
         for(i = ini, k = 0; i <= fim; i++, k++)
             alunos[i] = aux[k];
     }
-    
+    if ( tipo == 3 )
+    {
+        while (i <= meio && j <= fim)
+        {
+            if(alunos[i].data_de_nascimento.ano < alunos[j].data_de_nascimento.ano){ aux[k++] = alunos[i++];}
+
+            else if((alunos[i].data_de_nascimento.ano == alunos[j].data_de_nascimento.ano) &&
+                    (alunos[i].data_de_nascimento.mes < alunos[j].data_de_nascimento.mes)){ aux[k++] = alunos[i++];}
+
+            else if((alunos[i].data_de_nascimento.ano == alunos[j].data_de_nascimento.ano) &&
+                    (alunos[i].data_de_nascimento.mes == alunos[j].data_de_nascimento.mes) &&
+                    (alunos[i].data_de_nascimento.dia < alunos[j].data_de_nascimento.dia)){ aux[k++] = alunos[i++];}
+            else
+                aux[k++] = alunos[j++];
+        }
+
+        while (i <= meio)
+            aux[k++] = alunos[i++];
+        while (j <= fim)
+            aux[k++] = alunos[j++];
+
+        for(i = ini, k = 0; i <= fim; i++, k++)
+            alunos[i] = aux[k];
+    }
+    if ( tipo == 4 )
+    {
+        while (i <= meio && j <= fim)
+        {
+            if (alunos[i].prontuario <= alunos[j].prontuario)
+                aux[k++] = alunos[i++];
+            else
+                aux[k++] = alunos[j++];
+        }
+
+        while (i <= meio)
+            aux[k++] = alunos[i++];
+        while (j <= fim)
+            aux[k++] = alunos[j++];
+
+        for(i = ini, k = 0; i <= fim; i++, k++)
+            alunos[i] = aux[k];
+    }
+    if ( tipo == 5 )
+    {
+        while (i <= meio && j <= fim)
+        {
+            if (strcmp(alunos[i].curso, alunos[j].curso) <= 0)
+                aux[k++] = alunos[i++];
+            else
+                aux[k++] = alunos[j++];
+        }
+
+        while (i <= meio)
+            aux[k++] = alunos[i++];
+        while (j <= fim)
+            aux[k++] = alunos[j++];
+
+        for(i = ini, k = 0; i <= fim; i++, k++)
+            alunos[i] = aux[k];
+    }
     
 }
