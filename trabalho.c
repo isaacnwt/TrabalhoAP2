@@ -1,10 +1,9 @@
+#define QUANTIDADE_ALUNOS 1000
+#define SOBRENOME 50
+#define NOME 50
 
 #include <stdio.h>
 #include <string.h>
-#define NOME 50
-#define SOBRENOME 50
-#define QUANTIDADE_ALUNOS 1000
-
 
 typedef struct data
 {
@@ -55,7 +54,11 @@ void  setaTipoOrdenacao(aluno alunos[], int escolha, int tipo);
 void  trocaPosicao(aluno *posicao1, aluno *posicao2);
 void  mergeSort(aluno alunos[], int ini, int fim, int tipo);
 void  intercalar(aluno alunos[], int ini, int meio, int fim, int tipo);
-
+void  insertionSort(aluno alunos[], int tipo);
+int   localizaPosicao(aluno alunos[], int ultimo, aluno elemento, int tipo);
+void  deslocaSubVetor(aluno alunos[], int posicao, int ultimo);
+int   verificaOrdenacao(aluno alunos[], int tipo);
+void  buscaPorTipo(aluno alunos[], int tipo);
 
 void main()
 {
@@ -90,268 +93,15 @@ void main()
     
 }
 
-void buscaOrdenada(aluno alunos[])
-{
-    // esta função organiza o sub-menu referente a buscas
-    int escolha; // variável que recebe opção escolhido pelo usuário
-    printf("\nBUSCA ORDENADA DE ALUNOS\n");
-    do
-    {
-        printf("\nEscolha uma opcao:\n");
-        printf("[ 1 ] - Nome e Sobrenome\n");
-        printf("[ 2 ] - Nome\n");
-        printf("[ 3 ] - Sobrenome\n");
-        printf("[ 4 ] - Prontuario\n");
-        printf("[ 5 ] - Data de nascimento\n");
-        printf("[ 6 ] - Curso\n");
-        printf("[ 7 ] - Voltar ao menu principal\n");
-        printf("Entre com a opcao correspondente ao item desejado: ");
-        scanf("%d", &escolha);
 
-        switch (escolha)
-        {
-        case 1: buscaNomeSobrenome(alunos); break;
-        case 2: buscaNome(alunos);          break;
-        case 3: buscaSobrenome(alunos);     break;
-        case 4: buscaProntuario(alunos);    break;
-        case 5: buscaNascimento(alunos);    break;
-        case 6: buscaCurso(alunos);         break;
-        case 7: break;
-        default: printf("\nErro! Opcao invalida.\n");
-        }
-
-    } while ( escolha != 7 );
-}
-
-void buscaCurso(aluno alunos[])
-{
-    // função responsável por buscar e listar por: curso
-
-    carregaArquivo(alunos); // carrega da memória secundária arquivo com os dados já cadastrados
-    char curso[10]; // vetor que recebe o curso que o usuário deseja listar
-    int  i, contador=0; // variárel 'contador' conta quantos alunos foram listados
-    int  index = localizaUltimaPosicao(alunos); // variavel index recebe o indice da ultima posição do vetor alunos[]
-
-    printf("\nBUSCA POR CURSO\n");
-    printf("Digite o curso: "); fflush(stdin); gets(curso); // recebe o curso desejado pelo usuário
-
-    for( i=0 ; i<index ; i++ ) // laço para encontrar os itens desejados
-    {
-        if( ! (strcmp(alunos[i].curso, curso))) // strcmp retorn 0 quando os valores passados são iguais
-        {
-            mostraInfo(alunos, i); // mostra para o usuário o resultado da busca
-            marcarNome(alunos, i); // marca o resultado achado, para caso o usuário queira deletar depois
-            contador++; // conta quantos itens foram mostrados
-        }
-    }
-    if(!contador) // se o contador tiver em 0, não foi achado nenhum resultado
-    {
-        printf("\nNao foi encontrado aluno relacionado a este curso.\n");
-    } else confirmaApagarDados(alunos); // pergunta ao usuário se quer apagar os dados listados
-}
-
-void buscaNascimento(aluno alunos[])
-{
-    // função responsável por buscar e listar por: curso
-
-    carregaArquivo(alunos); // carrega da memória secundária arquivo com os dados já cadastrados
-    int dia, mes, ano; // recebe a data de nascimento para fazer a busca
-    int i, contador=0;  // variárel 'contador' conta quantos alunos foram listados
-    int index = localizaUltimaPosicao(alunos); // variavel index recebe o indice da ultima posição do vetor alunos[]
-
-    printf("\nBUSCA POR NASCIMENTO\n"); // recebe a data de nascimento desejada
-    printf("Digite o dia:"); scanf("%d", &dia);
-    printf("Digite o mes:"); scanf("%d", &mes);
-    printf("Digite o ano:"); scanf("%d", &ano);
-
-    for( i=0 ; i<index ; i++ ) // laço para encontrar os itens desejados
-    {
-        if( (alunos[i].data_de_nascimento.dia == dia) &&
-            (alunos[i].data_de_nascimento.mes == mes) &&
-            (alunos[i].data_de_nascimento.ano == ano))  // apenas se as três datas forem iguais
-        {
-            mostraInfo(alunos, i); // mostra para o usuário o resultado da busca
-            marcarNome(alunos, i); // marca o resultado achado, para caso o usuário queira deletar depois
-            contador++; // conta quantos itens foram mostrados
-        }
-    }
-    if(!contador) // se o contador tiver em 0, não foi achado nenhum resultado
-    {
-        printf("\nNão foi encontrado aluno com esta data de nascimento.\n");
-    } else confirmaApagarDados(alunos); // pergunta ao usuário se quer apagar os dados listados
-}
-
-void buscaProntuario(aluno alunos[])
-{
-
-    // função responsável por buscar e listar por: prontuário
-
-    carregaArquivo(alunos); // carrega da memória secundária arquivo com os dados já cadastrados
-    int prontuario; // variável que recebe o curso que o usuário deseja listar
-    int i, contador=0; // variável 'contador' conta quantos alunos foram listados
-    int index = localizaUltimaPosicao(alunos); // variavel index recebe o indice da ultima posição do vetor alunos[]
-
-    printf("\nBUSCA POR PRONTUARIO\n"); 
-    printf("Digite o prontuario: "); scanf("%d", &prontuario); // recebe o curso desejado pelo usuário
-
-    for( i=0 ; i<index ; i++ ) // laço para encontrar os itens desejados
-    {
-        if( alunos[i].prontuario == prontuario ) // se achar um prontuário, então é mostrado ao usuário
-        {
-            mostraInfo(alunos, i); // mostra para o usuário o resultado da busca
-            marcarNome(alunos, i); // marca o resultado achado, para caso o usuário queira deletar depois
-            contador++; // conta quantos itens foram mostrados 
-        }
-    }
-    if(!contador) // se o contador tiver em 0, não foi achado nenhum resultado
-    {
-        printf("\nNao foi encontrado aluno relacionado a este prontuario.\n");
-    } else confirmaApagarDados(alunos); // pertunta ao usuário se quer apagar os dados listados
-}
-
-void marcarNome(aluno alunos[], int i)
-{
-    // função responsavel por 'marcar' os itens que serão deletados caso o usuário queira
-    // strcpy copia a segunda string, para a posição da primeira string
-    // como essa lista é temporária, alunos[].nome com "deletar" só ficará enquanto a lista tiver dentro da função que chamar esta
-
-    strcpy(alunos[i].nome, "deletar");
-}
-
-void buscaSobrenome(aluno alunos[])
-{
-    // função responsável por buscar e listar por: sobrenome
-
-    carregaArquivo(alunos); // carrega da memória secundária arquivo com os dados já cadastrados
-    char sobrenome[50]; // vetor que recebe o sobrenome que o usuário deseja listar
-    int  i, contador=0; // variável 'contador' conta quantos alunos foram listados
-    int  index = localizaUltimaPosicao(alunos); // variavel index recebe o indice da ultima posição do vetor alunos[]
-
-    printf("\nBUSCA POR SOBRENOME\n");
-    printf("Digite o sobrenome: "); fflush(stdin); gets(sobrenome); //recebe o sobrenome desejado
-
-    for( i=0 ; i<index ; i++ )
-    {
-        if(!(strcmp(alunos[i].sobrenome, sobrenome))) //strcmp retorna 0 quando os valores passados são iguais
-        {
-            mostraInfo(alunos, i); // mostra para o usuário o resultado da busca
-            marcarNome(alunos, i); // marca o resultado achado, para caso o usuário queira deletar depois
-            contador++; // conta quantos itens foram mostrados
-        }
-    }
-    if(!contador) // se o contador tiver em 0, não foi achado nenhum resultado
-    {
-        printf("\nNao foi encontrado aluno relacionado a este sobrenome.\n");
-    } else confirmaApagarDados(alunos); // pergunta ao usuário se quer apagar os dados listados
-}
+// -------------------------------- ESPAÇO DAS ROTINAS -------------------------------------- //  
 
 
-void buscaNomeSobrenome(aluno alunos[])
-{
-    // função resonsável por buscar e listar por: nome e sobrenome
+/* ===========================================================================================*/
 
-    carregaArquivo(alunos); // carrega da memória secundária arquivo com os dados já cadastrados
-    char nome[50];
-    char sobrenome[50];
-    int  i, contador=0; // variável contador conta quantos alunos foram listados
-    int  index = localizaUltimaPosicao(alunos); // variavel index recebe o indice da ultima posição do vetor alunos[]
+/* ========================= rotinas para salvar e carregar dados ============================*/
 
-    printf("\nBUSCA POR NOME E SOBRENOME\n");
-    printf("Digite o nome: "); fflush(stdin); gets(nome);
-    printf("Digite o sobrenome: "); fflush(stdin); gets(sobrenome);
-
-    for( i=0 ; i<index ; i++ )
-    {
-        // strcmp retorna 0 quando os valores passados são iguais
-        // para passar no if, as duas strcmp precisa retornar 0
-        if(! (strcmp(alunos[i].nome, nome) || (strcmp(alunos[i].sobrenome, sobrenome))))
-        {
-            mostraInfo(alunos, i); // mostra para o usuário o resultado da busca
-            marcarNome(alunos, i); // marca o resultado achado, para caso o usuário queira deletar depois
-            contador++; // conta quantos itens foram mostrados
-        }
-    }
-    if(!contador) // caso o contador tiver em 0, não foi achado nenhum resultado
-    {
-        printf("\nNao foi encontrado aluno relacionado a este nome e sobrenome.\n");
-    } else confirmaApagarDados(alunos); // pergunta ao usuário se quer apagar os dados listados
-}
-
-void confirmaApagarDados(aluno alunos[])
-{
-    // função responsável por CONFIRMAR se o usuário quer apagar os dados listados na busca ordenada
-
-    int resposta;
-    printf("\nGostaria de remover da lista os itens listados?");
-    printf("\n[ 1 ] - SIM");
-    printf("\n[ 2 ] - NAO");
-    printf("\nDigite o numero correspondente ao item desejado:");
-    scanf("%d", &resposta);
-    if( resposta == 1 )
-    {
-        apagarDados(alunos); // apaga os dados que estiverm marcados como 'deletas pela função marcarNome()
-        atualizaArquivo(alunos); // atualiza o arquivo na memória secundária com a nova lista atualizada
-        printf("\nLISTA ATUALIZADA\n");
-    }
-}
-
-
-void apagarDados(aluno alunos[])
-{
-    // função reponsável apagar os dados e reorganizar o vetor
-    // para apagar um item de vetor, é necessário substituir o item desejado pelo seu sucessor
-    // e o sucessor pelo sucessor, e por assim em diante até o final do vetor
-
-    int i, j;
-    // laço que percorre toda o vetor de alunos carregado na memória principal
-    for( i=0 ; i<QUANTIDADE_ALUNOS ; i++ )
-    {
-        // se for achar um aluno marcado como 'deletar', então entra no if para fazer a operação
-        if( !(strcmp(alunos[i].nome, "deletar"))) 
-        {
-            // 'j' recebe o indice que contém o item para deletar
-            // o laço irá até a última posição do vetor (que contem alunos gravados)
-            for( j=i ; j<localizaUltimaPosicao(alunos) ; j++ )
-            {
-                // aqui estamos substituindo o item desejado pelo seu sucessor
-                // fazemos isso até o final da lista
-                alunos[j] = alunos[j+1];
-            }
-            // após fazer uma operação de deletar, retornamos um indice do laço externo
-            // desta forma não ocorre de pular um indice do vetor
-            // pois pode acontecer de ter de apagar dois itens em sequência
-            i--;
-        }
-    }
-}
-
-void buscaNome(aluno alunos[])
-{
-    // função responsável por buscar e listar por: nome
-
-    carregaArquivo(alunos); // carrega da memória secundária arquivo com os dados já cadastrados
-    char nome_busca[50];
-    int  i, contador=0;
-    int  index = localizaUltimaPosicao(alunos); // index recebe o indice da ultima posição do vetor alunos[]
-
-    printf("\nBUSCA POR NOME\n");
-    printf("Digite o nome: "); fflush(stdin); gets(nome_busca); // recebe o curso desejado pelo usuário
-
-    for( i=0 ; i<index ; i++ )
-    {
-        if(!(strcmp(alunos[i].nome, nome_busca))) // strcmp retorn 0 quando os valores passados são iguais
-        {
-            mostraInfo(alunos, i); // mostra para o usuário o resultado da busca
-            marcarNome(alunos, i); // marca o resultado achado, para caso o usuário queira deletar depois
-            contador++; // conta quantos itens foram mostrados
-        }
-    }
-    if(!contador) // se o contador tiver em 0, não foi achado nenhum resultado
-    {
-        printf("\nNao foi encontrado aluno relacionado a este nome.\n");
-    } else confirmaApagarDados(alunos); // pergunta ao usuário se quer apagar os dados listados
-}
-
+/* ===========================================================================================*/
 
 void atualizaArquivo(aluno alunos[])
 {
@@ -427,16 +177,13 @@ void carregaArquivo(aluno alunos[])
     fclose(ponteiro_arquivo);
 }
 
-aluno inicializaLista(aluno alunos[])
-{
-    // esta função inicializa o vetor alunos[] colocando a string "" em todos os nomes do vetor
-    // desta forma é possível localizar a última posição em que há alunos cadastrados 
-    int i;
-    for( i=0 ; i<QUANTIDADE_ALUNOS ; i++ )
-    {
-        strcpy(alunos[i].nome, "");
-    }
-}
+
+
+/* ===========================================================================================*/
+
+/* ===========================    rotinas  OPERACIONAIS    ===================================*/
+
+/* ===========================================================================================*/
 
 int localizaUltimaPosicao(aluno alunos[])
 {
@@ -453,6 +200,144 @@ int localizaUltimaPosicao(aluno alunos[])
     // variável 'index' contendo a primeira ocorrência da string "", que indica o primeiro indice vazio para armazenar mais um aluno
     return index;
 }
+
+void mostraInfo(aluno alunos[], int i)
+{
+    // esta função mostra as informação do aluno passado por parâmetro.
+    
+    printf("\nAluno ----   %d   ---- ", i+1);
+    printf("\nNome.........: %s", alunos[i].nome);
+    printf("\nSobrenome....: %s", alunos[i].sobrenome);
+    printf("\nNascimento...: %d/%d/%d", alunos[i].data_de_nascimento.dia, alunos[i].data_de_nascimento.mes, alunos[i].data_de_nascimento.ano);
+    printf("\nProntuario...: %ld", alunos[i].prontuario);
+    printf("\nCurso........: %s\n", alunos[i].curso);
+}
+
+void marcarNome(aluno alunos[], int i)
+{
+    // função responsavel por 'marcar' os itens que serão deletados caso o usuário queira
+    // strcpy copia a segunda string, para a posição da primeira string
+    // como essa lista é temporária, alunos[].nome com "deletar" só ficará enquanto a lista tiver dentro da função que chamar esta
+
+    strcpy(alunos[i].nome, "deletar");
+}
+
+void confirmaApagarDados(aluno alunos[])
+{
+    // função responsável por CONFIRMAR se o usuário quer apagar os dados listados na busca ordenada
+
+    int resposta;
+    printf("\nGostaria de remover da lista os itens listados?");
+    printf("\n[ 1 ] - SIM");
+    printf("\n[ 2 ] - NAO");
+    printf("\nDigite o numero correspondente ao item desejado:");
+    scanf("%d", &resposta);
+    if( resposta == 1 )
+    {
+        apagarDados(alunos); // apaga os dados que estiverm marcados como 'deletas pela função marcarNome()
+        atualizaArquivo(alunos); // atualiza o arquivo na memória secundária com a nova lista atualizada
+        printf("\nLISTA ATUALIZADA\n");
+    }
+}
+
+void apagarDados(aluno alunos[])
+{
+    // função reponsável apagar os dados e reorganizar o vetor
+    // para apagar um item de vetor, é necessário substituir o item desejado pelo seu sucessor
+    // e o sucessor pelo sucessor, e por assim em diante até o final do vetor
+
+    int i, j;
+    // laço que percorre toda o vetor de alunos carregado na memória principal
+    for( i=0 ; i<QUANTIDADE_ALUNOS ; i++ )
+    {
+        // se for achar um aluno marcado como 'deletar', então entra no if para fazer a operação
+        if( !(strcmp(alunos[i].nome, "deletar"))) 
+        {
+            // 'j' recebe o indice que contém o item para deletar
+            // o laço irá até a última posição do vetor (que contem alunos gravados)
+            for( j=i ; j<localizaUltimaPosicao(alunos) ; j++ )
+            {
+                // aqui estamos substituindo o item desejado pelo seu sucessor
+                // fazemos isso até o final da lista
+                alunos[j] = alunos[j+1];
+            }
+            // após fazer uma operação de deletar, retornamos um indice do laço externo
+            // desta forma não ocorre de pular um indice do vetor
+            // pois pode acontecer de ter de apagar dois itens em sequência
+            i--;
+        }
+    }
+}
+
+aluno inicializaLista(aluno alunos[])
+{
+    // esta função inicializa o vetor alunos[] colocando a string "" em todos os nomes do vetor
+    // desta forma é possível localizar a última posição em que há alunos cadastrados 
+    int i;
+    for( i=0 ; i<QUANTIDADE_ALUNOS ; i++ )
+    {
+        strcpy(alunos[i].nome, "");
+    }
+}
+
+void trocaPosicao(aluno *posicao1, aluno *posicao2)
+{
+    aluno aluno_aux = *posicao1;
+    *posicao1 = *posicao2;
+    *posicao2 = aluno_aux;
+}
+
+int verificaOrdenacao(aluno alunos[], int tipo)
+{
+    carregaArquivo(alunos);
+    int index = localizaUltimaPosicao(alunos);
+    int i, contador=0;
+
+    for( i=0 ; i<(index-1) ; i++ )
+    {
+        if( tipo == 1 || tipo == 2 )
+        {
+            if( strcmp(alunos[i].nome, alunos[i+1].nome) <= 0 ) contador++;
+        }
+        else if ( tipo == 3 )
+        {
+            if( strcmp(alunos[i].sobrenome, alunos[i+1].sobrenome) <=0 ) contador++;
+        }
+        else if( tipo == 4 )
+        {
+            if( alunos[i].prontuario <= alunos[i+1].prontuario ) contador++;
+        }
+        else if( tipo == 5 )
+        {
+            if( alunos[i].data_de_nascimento.ano < alunos[i+1].data_de_nascimento.ano ) 
+            contador++;
+
+            else if( alunos[i].data_de_nascimento.ano == alunos[i+1].data_de_nascimento.ano &&
+                     alunos[i].data_de_nascimento.mes <  alunos[i+1].data_de_nascimento.mes)
+                     contador++;
+
+            else if( alunos[i].data_de_nascimento.ano == alunos[i+1].data_de_nascimento.ano &&
+                     alunos[i].data_de_nascimento.mes == alunos[i+1].data_de_nascimento.mes &&
+                     alunos[i].data_de_nascimento.dia <= alunos[i+1].data_de_nascimento.dia)
+                     contador ++;
+        }
+        else if( tipo == 6 )
+        {
+            if( strcmp(alunos[i].curso, alunos[i+1].curso) <= 0 ) contador++;
+        }
+    }
+    if( contador == (index - 1) ) return 1;
+    else return 0;
+}
+
+
+
+
+/* ===========================================================================================*/
+
+/* ==========================   rotinas para CADASTRAR alunos   ==============================*/
+
+/* ===========================================================================================*/
 
 void cadastrarAlunos(aluno alunos[])
 {
@@ -488,6 +373,14 @@ void cadastrarAlunos(aluno alunos[])
     atualizaArquivo(alunos);
 }
 
+
+
+/* ===========================================================================================*/
+
+/* ===========================   rotinas para LISTAR alunos   ================================*/
+
+/* ===========================================================================================*/
+
 void listarAlunos(aluno alunos[])
 {
   // esta funçaõ lista para o usuário todos os alunos cadastrados
@@ -504,17 +397,178 @@ void listarAlunos(aluno alunos[])
   }
 }
 
-void mostraInfo(aluno alunos[], int i)
+
+
+/* ===========================================================================================*/
+
+/* ===========================   rotinas para BUSCAR alunos   ================================*/
+
+/* ===========================================================================================*/
+
+void buscaOrdenada(aluno alunos[])
 {
-    // esta função mostra as informação do aluno passado por parâmetro.
-    
-    printf("\nAluno ----   %d   ---- ", i+1);
-    printf("\nNome.........: %s", alunos[i].nome);
-    printf("\nSobrenome....: %s", alunos[i].sobrenome);
-    printf("\nNascimento...: %d/%d/%d", alunos[i].data_de_nascimento.dia, alunos[i].data_de_nascimento.mes, alunos[i].data_de_nascimento.ano);
-    printf("\nProntuario...: %ld", alunos[i].prontuario);
-    printf("\nCurso........: %s\n", alunos[i].curso);
+    // esta função organiza o sub-menu referente a buscas
+    int escolha; // variável que recebe opção escolhido pelo usuário
+    printf("\nBUSCA ORDENADA DE ALUNOS\n");
+    do
+    {
+        printf("\nEscolha uma opcao:\n");
+        printf("[ 1 ] - Nome e Sobrenome\n");
+        printf("[ 2 ] - Nome\n");
+        printf("[ 3 ] - Sobrenome\n");
+        printf("[ 4 ] - Prontuario\n");
+        printf("[ 5 ] - Data de nascimento\n");
+        printf("[ 6 ] - Curso\n");
+        printf("[ 7 ] - Voltar ao menu principal\n");
+        printf("Entre com a opcao correspondente ao item desejado: ");
+        scanf("%d", &escolha);
+
+        switch (escolha)
+        {
+        case 1: buscaPorTipo(alunos, 1); break;
+        case 2: buscaPorTipo(alunos, 2); break;
+        case 3: buscaPorTipo(alunos, 3); break;
+        case 4: buscaPorTipo(alunos, 4); break;
+        case 5: buscaPorTipo(alunos, 5); break;
+        case 6: buscaPorTipo(alunos, 6); break;
+        case 7: break;
+        default: printf("\nErro! Opcao invalida.\n");
+        }
+
+    } while ( escolha != 7 );
 }
+
+void buscaPorTipo(aluno alunos[], int tipo)
+{
+    carregaArquivo(alunos);
+
+    char nome[50];
+    if( tipo == 2 )
+    {
+        printf("\nBUSCA POR NOME\n");
+        printf("Digite o nome: "); fflush(stdin); gets(nome);
+    }
+    char sobrenome[50];
+    if(tipo == 3)
+    {
+        printf("\nBUSCA SOBRENOME\n");
+        printf("Digite o sobrenome: "); fflush(stdin); gets(sobrenome);
+    }
+
+    if(tipo == 1)
+    {
+        printf("\nBUSCA POR NOME E SOBRENOME\n");
+        printf("Digite o nome: "); fflush(stdin); gets(nome);
+        printf("Digite o sobrenome: "); fflush(stdin); gets(sobrenome);
+    }
+
+    int  prontuario;
+    if( tipo == 4 )
+    {
+        printf("\nBUSCA POR PRONTUARIO\n"); 
+        printf("Digite o prontuario: "); scanf("%d", &prontuario);
+    }
+
+    int  dia, mes, ano;
+    if( tipo == 5 )
+    {
+        printf("\nBUSCA POR NASCIMENTO\n"); // recebe a data de nascimento desejada
+        printf("Digite o dia:"); scanf("%d", &dia);
+        printf("Digite o mes:"); scanf("%d", &mes);
+        printf("Digite o ano:"); scanf("%d", &ano);
+    }
+
+    char curso[10];
+    if( tipo == 6 )
+    {
+        printf("\nBUSCA POR CURSO\n");
+        printf("Digite o curso: "); fflush(stdin); gets(curso);
+    }
+
+    int i, contador=0;
+    int index = localizaUltimaPosicao(alunos);
+
+
+    if( verificaOrdenacao(alunos, tipo))
+    {
+        // busca binária
+    }
+    else 
+    {
+        for( i=0 ; i<index ; i++ )
+        {
+            if( tipo == 1 )
+            {
+                if(! (strcmp(alunos[i].nome, nome) || (strcmp(alunos[i].sobrenome, sobrenome))))
+                {
+                    mostraInfo(alunos, i); // mostra para o usuário o resultado da busca
+                    marcarNome(alunos, i); // marca o resultado achado, para caso o usuário queira deletar depois
+                    contador++; // conta quantos itens foram mostrados
+                }
+            }
+            else if( tipo == 2 )
+            {
+                if(!(strcmp(alunos[i].nome, nome))) // strcmp retorn 0 quando os valores passados são iguais
+                {
+                    mostraInfo(alunos, i); // mostra para o usuário o resultado da busca
+                    marcarNome(alunos, i); // marca o resultado achado, para caso o usuário queira deletar depois
+                    contador++; // conta quantos itens foram mostrados
+                }
+            }
+            else if( tipo == 3 )
+            {
+                if(!(strcmp(alunos[i].sobrenome, sobrenome))) //strcmp retorna 0 quando os valores passados são iguais
+                {
+                    mostraInfo(alunos, i); // mostra para o usuário o resultado da busca
+                    marcarNome(alunos, i); // marca o resultado achado, para caso o usuário queira deletar depois
+                    contador++; // conta quantos itens foram mostrados
+                }
+            }
+            else if( tipo == 4 )
+            {
+                if( alunos[i].prontuario == prontuario ) // se achar um prontuário, então é mostrado ao usuário
+                {
+                    mostraInfo(alunos, i); // mostra para o usuário o resultado da busca
+                    marcarNome(alunos, i); // marca o resultado achado, para caso o usuário queira deletar depois
+                    contador++; // conta quantos itens foram mostrados 
+                }
+            }
+            else if( tipo == 5 )
+            {
+                if( (alunos[i].data_de_nascimento.dia == dia) &&
+                (alunos[i].data_de_nascimento.mes == mes) &&
+                (alunos[i].data_de_nascimento.ano == ano))  // apenas se as três datas forem iguais
+                {
+                    mostraInfo(alunos, i); // mostra para o usuário o resultado da busca
+                    marcarNome(alunos, i); // marca o resultado achado, para caso o usuário queira deletar depois
+                    contador++; // conta quantos itens foram mostrados
+                }
+            }
+            else if( tipo == 6 )
+            {
+                if( ! (strcmp(alunos[i].curso, curso))) // strcmp retorn 0 quando os valores passados são iguais
+                {
+                    mostraInfo(alunos, i); // mostra para o usuário o resultado da busca
+                    marcarNome(alunos, i); // marca o resultado achado, para caso o usuário queira deletar depois
+                    contador++; // conta quantos itens foram mostrados
+                }
+            }
+        }
+        if(!contador) // se o contador tiver em 0, não foi achado nenhum resultado
+        {
+            printf("\nNao foi encontrado aluno com este cadastro.\n");
+        } else confirmaApagarDados(alunos);
+    }
+
+}
+
+
+
+/* ===========================================================================================*/
+
+/* ===========================   rotinas para LISTAR alunos   ================================*/
+
+/* ===========================================================================================*/
 
 void listagemOrdenada(aluno alunos[])
 {
@@ -555,16 +609,50 @@ void organizaPorTipo(aluno alunos[], int tipo)
 
     int i;
     int escolha   = menuOrdenacao();
-    int index     = localizaUltimaPosicao(alunos);
     
     setaTipoOrdenacao(alunos, escolha, tipo);
-
+    
+    int index     = localizaUltimaPosicao(alunos);
     carregaArquivo(alunos);
     for(i = 0; i < index; i++)
     {
         //a saída dos nomes está vindo com o ENTER
         mostraInfo(alunos, i); // mostra as informações do aluno em questão
     }
+}
+
+
+
+/* ===========================================================================================*/
+
+/* =========================   rotinas para ORDENAR vetores   ================================*/
+
+/* ===========================================================================================*/
+
+void setaTipoOrdenacao(aluno alunos[], int escolha, int tipo)
+{
+    int tam = localizaUltimaPosicao(alunos);
+
+    if( escolha == 1 ) selectionSort(alunos, tipo);
+    if( escolha == 2 ) insertionSort(alunos, tipo);
+    if( escolha == 3 ) mergeSort(alunos, 0, tam, tipo);
+}
+
+int menuOrdenacao()
+{
+    int escolha = 0;
+    do
+    {
+        printf("\n[ 1 ] - Ordenar por Selecao          (Selection Sort)\n");
+        printf("[ 2 ] - Ordenar por Insercao         (Insertion Sort)\n");
+        printf("[ 3 ] - Ordenar por Intercalacao     (Merge Sort) \n");
+        printf("[ 4 ] - Ordenar por Particionamento  (Quick Sort) \n");
+
+        printf("Digite a opcao desejada: "); scanf("%d", &escolha);
+
+    } while ( escolha < 1 || escolha > 4 );
+
+    return escolha;
 }
 
 void selectionSort(aluno alunos[], int tipo )
@@ -604,17 +692,17 @@ void selectionSort(aluno alunos[], int tipo )
                 }
             
                 else if((alunos[i].data_de_nascimento.ano == alunos[j].data_de_nascimento.ano) &&
-                    (alunos[i].data_de_nascimento.mes > alunos[j].data_de_nascimento.mes))
-                    {
-                        trocaPosicao(&alunos[i], &alunos[j]);
-                    }
+                        (alunos[i].data_de_nascimento.mes > alunos[j].data_de_nascimento.mes))
+                        {
+                            trocaPosicao(&alunos[i], &alunos[j]);
+                        }
             
                 else if((alunos[i].data_de_nascimento.ano == alunos[j].data_de_nascimento.ano) &&
-                    (alunos[i].data_de_nascimento.mes == alunos[j].data_de_nascimento.mes)  &&
-                    (alunos[i].data_de_nascimento.dia > alunos[j].data_de_nascimento.dia))
-                    {
-                       trocaPosicao(&alunos[i], &alunos[j]);
-                    }
+                        (alunos[i].data_de_nascimento.mes == alunos[j].data_de_nascimento.mes) &&
+                        (alunos[i].data_de_nascimento.dia > alunos[j].data_de_nascimento.dia))
+                        {
+                        trocaPosicao(&alunos[i], &alunos[j]);
+                        }
             }
 
             else
@@ -638,46 +726,6 @@ void selectionSort(aluno alunos[], int tipo )
     }
     atualizaArquivo(alunos);
 }
-
-void trocaPosicao(aluno *posicao1, aluno *posicao2)
-{
-    aluno aluno_aux = *posicao1;
-    *posicao1 = *posicao2;
-    *posicao2 = aluno_aux;
-}
-
-int menuOrdenacao()
-{
-    int escolha;
-    do
-    {
-
-        printf("\n[ 1 ] - Ordenar por Selecao\n");
-        printf("[ 2 ] - Ordenar por Insercao\n");
-        printf("[ 3 ] - Ordernar por Intercalacao (Merge Sort) \n");
-        printf("[ 4 ] - Ordernar por Particionamento (Quick Sort) \n");
-
-        printf("Digite a opcao desejada: "); scanf("%d", &escolha);
-
-    } while ( escolha < 1 || escolha > 4 );
-
-    return escolha;
-}
-
-void setaTipoOrdenacao(aluno alunos[], int escolha, int tipo)
-{
-    int tam = localizaUltimaPosicao(alunos);
-
-    switch(escolha)
-    {
-        case 1: selectionSort(alunos, tipo); break;
-        // case 2: insertionSort(alunos, tipo); break;
-        case 3: mergeSort(alunos, 0, tam, tipo); break;
-        // case 4: quickSort(alunos, tipo); break;
-        default: break;
-    }
-}
-
 
 void mergeSort(aluno alunos[], int ini, int fim, int tipo)
 {   
@@ -800,3 +848,75 @@ void intercalar(aluno alunos[], int ini, int meio, int fim, int tipo)
     }
     
 }
+
+void insertionSort(aluno alunos[], int tipo)
+{
+    carregaArquivo(alunos);
+    int i, posicao;
+    aluno elemento;
+
+    for( i=1 ; i<localizaUltimaPosicao(alunos) ; i++ )
+    {
+        elemento = alunos[i];
+        posicao  = localizaPosicao(alunos, i-1, elemento, tipo);
+        deslocaSubVetor(alunos, posicao, i);
+        alunos[posicao] = elemento;
+        atualizaArquivo(alunos);
+    }
+}
+
+int localizaPosicao(aluno alunos[], int ultimo, aluno elemento, int tipo)
+{
+    int i;
+    for( i=0 ; i<=ultimo ; i++ )
+    {
+        if (tipo == 1)
+        {   
+            if( strcmp(elemento.nome, alunos[i].nome) < 0 )
+            {
+                return i;
+            }
+        } 
+
+        else if (tipo == 2)
+        {
+            if( strcmp(elemento.sobrenome, alunos[i].sobrenome) < 0 ) return i;
+        } 
+
+        else if (tipo == 3)
+        {
+            if( elemento.data_de_nascimento.ano < alunos[i].data_de_nascimento.ano )
+                return i;
+
+            else if((elemento.data_de_nascimento.ano == alunos[i].data_de_nascimento.ano) &&
+                    (elemento.data_de_nascimento.mes < alunos[i].data_de_nascimento.mes))
+                        return i;
+
+            else if((elemento.data_de_nascimento.ano == alunos[i].data_de_nascimento.ano) &&
+                    (elemento.data_de_nascimento.mes == alunos[i].data_de_nascimento.mes) &&
+                    (elemento.data_de_nascimento.dia < alunos[i].data_de_nascimento.dia)) 
+                        return i;
+        } 
+
+        else if (tipo == 4)
+        {
+            if( elemento.prontuario < alunos[i].prontuario ) return i;
+        } 
+
+        else if (tipo == 5)
+        {
+            if( strcmp(elemento.curso, alunos[i].curso ) < 0 ) return i;
+        }        
+    }
+    return i;
+}
+
+void deslocaSubVetor(aluno alunos[], int posicao, int ultimo)
+{
+    int i;
+    for( i=ultimo ; i>posicao ; i-- )
+    {
+        alunos[i] = alunos[i-1];
+    }
+}
+
