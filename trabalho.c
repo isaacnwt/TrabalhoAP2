@@ -59,6 +59,10 @@ int   localizaPosicao(aluno alunos[], int ultimo, aluno elemento, int tipo);
 void  deslocaSubVetor(aluno alunos[], int posicao, int ultimo);
 int   verificaOrdenacao(aluno alunos[], int tipo);
 void  buscaPorTipo(aluno alunos[], int tipo);
+void  quickSort(aluno alunos[], int ini, int fim, int tipo);
+int   particionar(aluno alunos[], int ini, int fim, int tipo);
+
+
 
 void main()
 {
@@ -636,6 +640,7 @@ void setaTipoOrdenacao(aluno alunos[], int escolha, int tipo)
     if( escolha == 1 ) selectionSort(alunos, tipo);
     if( escolha == 2 ) insertionSort(alunos, tipo);
     if( escolha == 3 ) mergeSort(alunos, 0, tam, tipo);
+    if( escolha == 4 ) quickSort(alunos, 0, tam, tipo);
 }
 
 int menuOrdenacao()
@@ -920,3 +925,39 @@ void deslocaSubVetor(aluno alunos[], int posicao, int ultimo)
     }
 }
 
+void quickSort(aluno alunos[], int ini, int fim, int tipo)
+{   
+    carregaArquivo(alunos);
+    int idx_pivo;
+
+    if ( ini <  fim )
+    {
+        idx_pivo = particionar(alunos, ini, fim, tipo);
+        quickSort(alunos, ini, idx_pivo - 1, tipo);
+        quickSort(alunos, idx_pivo, fim, tipo);
+    }
+
+    atualizaArquivo(alunos);
+}
+
+int particionar(aluno alunos[], int ini, int fim, int tipo)
+{   
+    int esq = ini;
+    int dir = fim;
+    aluno pivo = alunos[ini];
+
+    while ( esq < dir )
+    {
+        while ( alunos[esq].prontuario <= pivo.prontuario )
+            esq++;
+        while ( alunos[dir].prontuario > pivo.prontuario )
+            dir--;
+
+        if( esq < dir ) { trocaPosicao( &alunos[esq], &alunos[dir] ); };   
+    }
+
+    alunos[ini] =  alunos[dir];
+    alunos[dir] = pivo;
+
+    return dir;
+}
