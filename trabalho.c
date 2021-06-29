@@ -495,15 +495,150 @@ void buscaPorTipo(aluno alunos[], int tipo)
 
     if( verificaOrdenacao(alunos, tipo))
     {
-        // busca binária
+        carregaArquivo(alunos);
+        int inicio = 0;
+        int fim = localizaUltimaPosicao(alunos) - 1;
+        int meio;
+        int controle = 1;
+
+        while( inicio <= fim)
+        {   
+            meio = (inicio + fim) / 2;
+            if( tipo == 1 )
+            {
+                 if(! (strcmp(alunos[meio].nome, nome) && (strcmp(alunos[meio].sobrenome, sobrenome))))
+                    {
+                        while(! strcmp(alunos[meio].nome, alunos[meio-1].nome) && meio != 0 && controle == 1)
+                        {
+                            meio--;
+                        }
+                        controle = 0;
+
+                        mostraInfo(alunos, meio);
+                        marcarNome(alunos, meio); 
+                        contador++;
+                        inicio = meio+1;
+                    }
+                else if( strcmp(nome, alunos[meio].nome) < 0 ) fim = meio-1;
+                else inicio = meio+1;
+            }
+            else if( tipo == 2 )
+            {
+                if(!(strcmp(alunos[meio].nome, nome))) 
+                {
+                    while(! strcmp(alunos[meio].nome, alunos[meio-1].nome) && meio != 0 && controle == 1 )
+                        {
+                            meio--;
+                        }
+                        controle = 0;
+
+                        mostraInfo(alunos, meio);
+                        marcarNome(alunos, meio); 
+                        contador++;
+                        inicio = meio+1;
+                }
+                else if( strcmp(alunos[meio].nome, nome) > 0 ) fim = meio-1;
+                else inicio = meio+1;
+            }
+            else if( tipo == 3 )
+            {
+                if((!strcmp(alunos[meio].sobrenome, sobrenome)))
+                {
+                    
+                   while((!strcmp(alunos[meio].sobrenome, alunos[meio-1].sobrenome)) && meio != 0 && controle == 1)
+                        {
+                            meio--;
+                        }
+                        controle = 0;
+
+                        mostraInfo(alunos, meio);
+                        marcarNome(alunos, meio);
+                        contador++;
+                        inicio = meio+1;
+                }
+                else if( strcmp(sobrenome, alunos[meio].sobrenome) < 0 ) fim = meio-1;
+                else inicio = meio+1;
+            }
+            else if( tipo == 4 )
+            {
+                if(alunos[meio].prontuario == prontuario)
+                {
+                    while(alunos[meio].prontuario == alunos[meio-1].prontuario && meio != 0 && controle == 1)
+                        {
+                            meio--;
+                        }
+                        controle = 0;
+
+                        mostraInfo(alunos, meio);
+                        marcarNome(alunos, meio); 
+                        contador++;
+                        inicio = meio+1;
+                }
+                else if( alunos[meio].prontuario > prontuario ) fim = meio-1;
+                else inicio = meio+1;
+            }
+            else if( tipo == 5 )
+            {
+                if( (alunos[meio].data_de_nascimento.dia == dia) &&
+                    (alunos[meio].data_de_nascimento.mes == mes) &&
+                    (alunos[meio].data_de_nascimento.ano == ano))  
+                {
+                    while(alunos[meio].data_de_nascimento.ano == alunos[meio-1].data_de_nascimento.ano &&
+                          alunos[meio].data_de_nascimento.mes == alunos[meio-1].data_de_nascimento.mes &&
+                          alunos[meio].data_de_nascimento.dia == alunos[meio-1].data_de_nascimento.dia && meio != 0 && controle == 1)
+                          {
+                              meio--;
+                          }
+                          controle = 0;
+                    
+                    mostraInfo(alunos, meio); 
+                    marcarNome(alunos, meio);  
+                    contador++;
+                    inicio = meio+1;
+                }
+                else if( alunos[meio].data_de_nascimento.ano > ano ) fim = meio-1;
+
+                else if( alunos[meio].data_de_nascimento.ano == ano && 
+                         alunos[meio].data_de_nascimento.mes > mes) fim = meio-1;
+
+                else if( alunos[meio].data_de_nascimento.ano == ano &&
+                         alunos[meio].data_de_nascimento.mes == mes &&
+                         alunos[meio].data_de_nascimento.dia > dia) fim = meio-1;
+
+                else inicio = meio+1;
+            }
+            else if( tipo == 6 )
+            {
+                if( ! (strcmp(alunos[meio].curso, curso))) 
+                {
+                    while(! strcmp(alunos[meio].curso, alunos[meio-1].curso) && meio != 0 && controle == 1 )
+                        {
+                            meio--;
+                        }
+                        controle = 0;
+
+                        mostraInfo(alunos, meio);
+                        marcarNome(alunos, meio); 
+                        contador++;
+                        inicio = meio+1;
+                }
+                else if( strcmp(curso, alunos[meio].curso) < 0 ) fim = meio-1;
+                else inicio = meio+1;
+            }
+        }
+        if(!contador) 
+        {
+            printf("\nNao foi encontrado aluno com este cadastro.\n");
+        } else confirmaApagarDados(alunos);   
     }
+
     else 
     {
         for( i=0 ; i<index ; i++ )
         {
             if( tipo == 1 )
             {
-                if(! (strcmp(alunos[i].nome, nome) || (strcmp(alunos[i].sobrenome, sobrenome))))
+                if(! (strcmp(alunos[i].nome, nome) && (strcmp(alunos[i].sobrenome, sobrenome))))
                 {
                     mostraInfo(alunos, i); // mostra para o usuário o resultado da busca
                     marcarNome(alunos, i); // marca o resultado achado, para caso o usuário queira deletar depois
@@ -563,8 +698,8 @@ void buscaPorTipo(aluno alunos[], int tipo)
             printf("\nNao foi encontrado aluno com este cadastro.\n");
         } else confirmaApagarDados(alunos);
     }
-
 }
+
 
 
 
@@ -640,7 +775,7 @@ void setaTipoOrdenacao(aluno alunos[], int escolha, int tipo)
     if( escolha == 1 ) selectionSort(alunos, tipo);
     if( escolha == 2 ) insertionSort(alunos, tipo);
     if( escolha == 3 ) mergeSort(alunos, 0, tam, tipo);
-    if( escolha == 4 ) quickSort(alunos, 0, tam, tipo);
+    if( escolha == 4 ) quickSort(alunos, 0, tam-1, tipo);
 }
 
 int menuOrdenacao()
@@ -928,36 +1063,87 @@ void deslocaSubVetor(aluno alunos[], int posicao, int ultimo)
 void quickSort(aluno alunos[], int ini, int fim, int tipo)
 {   
     carregaArquivo(alunos);
-    int idx_pivo;
+    int posicao_maior;
 
     if ( ini <  fim )
     {
-        idx_pivo = particionar(alunos, ini, fim, tipo);
-        quickSort(alunos, ini, idx_pivo - 1, tipo);
-        quickSort(alunos, idx_pivo, fim, tipo);
+        posicao_maior = particionar(alunos, ini, fim, tipo);
+        quickSort(alunos, ini, posicao_maior - 1, tipo);
+        quickSort(alunos, posicao_maior, fim, tipo);
     }
 
     atualizaArquivo(alunos);
 }
 
 int particionar(aluno alunos[], int ini, int fim, int tipo)
-{   
-    int esq = ini;
-    int dir = fim;
-    aluno pivo = alunos[ini];
+{
+    aluno pivo = alunos[fim];
 
-    while ( esq < dir )
-    {
-        while ( alunos[esq].prontuario <= pivo.prontuario )
-            esq++;
-        while ( alunos[dir].prontuario > pivo.prontuario )
-            dir--;
+    while ( ini < fim )
+    {   
+        if ( tipo == 1 )
+        {
+            while ( ini < fim && strcmp( alunos[ini].nome, pivo.nome ) <= 0 )
+                ini++;
+            while ( ini < fim && strcmp( alunos[fim].nome, pivo.nome ) > 0 )
+                fim--;
 
-        if( esq < dir ) { trocaPosicao( &alunos[esq], &alunos[dir] ); };   
-    }
+            trocaPosicao( &alunos[ini], &alunos[fim] );
+            atualizaArquivo(alunos);
+        }
+        if ( tipo == 2 )
+        {
+            while ( ini < fim && strcmp( alunos[ini].sobrenome, pivo.sobrenome ) <= 0 )
+                ini++;
+            while ( ini < fim && strcmp( alunos[fim].sobrenome, pivo.sobrenome ) > 0 )
+                fim--;
 
-    alunos[ini] =  alunos[dir];
-    alunos[dir] = pivo;
+            trocaPosicao( &alunos[ini], &alunos[fim] );
+            atualizaArquivo(alunos);
+        }
+        if ( tipo == 3 )
+        {
+            while ( ini < fim && alunos[ini].data_de_nascimento.ano < pivo.data_de_nascimento.ano )
+                ini++;
+            while ( ini < fim && alunos[fim].data_de_nascimento.ano > pivo.data_de_nascimento.ano )
+                fim--;
+            if ( ini < fim && alunos[ini].data_de_nascimento.ano == pivo.data_de_nascimento.ano )
+            {
+                while ( ini < fim && alunos[ini].data_de_nascimento.mes < pivo.data_de_nascimento.mes )
+                    ini++;
+                while ( ini < fim && alunos[fim].data_de_nascimento.mes > pivo.data_de_nascimento.mes )
+                    fim--;
+                if ( ini < fim && alunos[ini].data_de_nascimento.ano == pivo.data_de_nascimento.ano )
+                {
+                    while ( ini < fim && alunos[ini].data_de_nascimento.dia <= pivo.data_de_nascimento.dia )
+                        ini++;
+                    while ( ini < fim && alunos[fim].data_de_nascimento.dia > pivo.data_de_nascimento.dia )
+                        fim--;
+                }
+            }
 
-    return dir;
+            trocaPosicao( &alunos[ini], &alunos[fim] );
+            atualizaArquivo(alunos);
+        }
+        if ( tipo == 4 )
+        {
+            while ( ini < fim && alunos[ini].prontuario <= pivo.prontuario )
+                ini++;
+            while ( ini < fim && alunos[fim].prontuario > pivo.prontuario )
+                fim--;
+
+            trocaPosicao( &alunos[ini], &alunos[fim] );
+            atualizaArquivo(alunos);
+        }
+        if ( tipo == 5 )
+        {
+            while ( ini < fim && strcmp( alunos[ini].curso, pivo.curso ) <= 0 )
+                ini++;
+            while ( ini < fim && strcmp( alunos[fim].curso, pivo.curso ) > 0 )
+                fim--;
+
+            trocaPosicao( &alunos[ini], &alunos[fim] );
+            atualizaArquivo(alunos);
+        }
+    } return ini;
 }
